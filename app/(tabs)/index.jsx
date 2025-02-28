@@ -1,9 +1,12 @@
 import { View, Text } from 'react-native';
+import {useAuth} from '../../providers/AuthProvider'
 
-export default function HomeScreen() {
+export default function () {
+  const {user} = useAuth();
   return (
     <View>
-      <Text style={{color:'red', fontWeight:800}} >Hello again</Text>
+      <Text style={{fontWeight:800}} >Home</Text>
+      <Text>{JSON.stringify(user)}</Text>
     </View>
   );
 }
