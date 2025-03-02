@@ -28,6 +28,9 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="camera" options={{ headerShown: false, presentation:'modal' }} />
+        <Stack.Screen name="comment" options={{ headerShown: false, presentation:'modal' }} />
+        <Stack.Screen name="user" options={{ headerShown: false,}} />
+        <Stack.Screen name="search" options={{ headerShown: false,}} />
         <Stack.Screen name="+not-found" />
       </Stack>
     </AuthProvider>

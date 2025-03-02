@@ -2,18 +2,24 @@ import { useRouter } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../utils/supabase";
 
-export const AuthContext = createContext({
-  user: null,
-  signIn: async (email, password) => {},
-  signUp: async (username, email, password) => {},
-  signOut: async () => {},
-});
+export const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const router = useRouter();
+  const [likes, setLikes] = useState(null);
+
+  const getLikes = async (userId) => {
+    if(!userId) return
+    const { data, error } = await supabase
+      .from("Like")
+      .select("*")
+     .eq("user_id", userId);
+    if (error) return console.error(error);
+    setLikes(data);
+  }
 
   const getUser = async (id) => {
     const { data, error } = await supabase
@@ -23,6 +29,7 @@ export const AuthProvider = ({ children }) => {
       .single();
     if (error) return console.error(error);
     setUser(data);
+    getLikes(data.id);
     router.push("/(tabs)");
   };
 
@@ -81,6 +88,8 @@ export const AuthProvider = ({ children }) => {
         signIn,
         signUp,
         signOut,
+        likes,
+        getLikes
       }}
     >
       {children}
