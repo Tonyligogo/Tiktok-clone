@@ -40,8 +40,8 @@ export default function () {
     getFollowers()
   },[params.user_id])
   return (
-    <SafeAreaView>
-      <Header title={user?.username} color='black' goBack/>
+    <SafeAreaView style={{backgroundColor:'black', flex:1}} >
+      <Header title={user?.username} color='white' goBack/>
       <Profile
       user={user}
       following={following}
