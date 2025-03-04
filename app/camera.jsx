@@ -22,6 +22,7 @@ export default function App() {
   const [isRecording, setIsRecording] = useState(false);
   const [videoUri, setVideoUri] = useState(null);
   const [status, setStatus] = useState({ isLoaded: false, isPlaying: true });
+  const [loading, setLoading] = useState(false);
   const cameraRef = useRef(null);
   const videoRef = useRef(null);
   const router = useRouter();
@@ -54,9 +55,6 @@ export default function App() {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.canceled) {
       setVideoUri(result.assets[0].uri);
     }
@@ -79,6 +77,7 @@ export default function App() {
   };
 
   const saveVideo = async () => {
+    setLoading(true);
     const formData = new FormData();
     const fileName = videoUri?.split("/").pop();
     formData.append("file", {
@@ -87,14 +86,15 @@ export default function App() {
       name: fileName,
     });
     const { data, error } = await supabase.storage
-      .from("videos")
+      .from('videos')
       .upload(fileName, formData, {
         cacheControl: "3600000000",
         upsert: false,
       });
     if (error) console.error('video storage error',error);
+    setLoading(false);
     const { error: videoError } = await supabase.from("Video").insert({
-      title: "Test title",
+      title: "Title",
       url: data?.path,
       user_id: user?.id,
     });
@@ -109,8 +109,13 @@ export default function App() {
           <TouchableOpacity
             style={{ position: "absolute", bottom: 80, left: '40%', zIndex:10 }}
             onPress={saveVideo}
+            disabled={loading}
           >
+            {loading ? 
+            <Text style={{color:'white', textAlign:'center', fontSize:24}}>Uploading ...</Text> 
+            : 
             <Ionicons name="checkmark-circle" size={70} color="white" />
+            }
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>

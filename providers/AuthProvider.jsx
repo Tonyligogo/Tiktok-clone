@@ -9,7 +9,10 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const router = useRouter();
-  const [likes, setLikes] = useState(null);
+  const [likes, setLikes] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [friends, setFriends] = useState([]);
 
   const getLikes = async (userId) => {
     if(!userId) return
@@ -21,6 +24,34 @@ export const AuthProvider = ({ children }) => {
     setLikes(data);
   }
 
+  const getFollowing = async (userId) => {
+    if(!userId) return
+    const { data, error } = await supabase
+      .from("Follower")
+      .select("*")
+     .eq("user_id", userId);
+    if (!error) setFollowing(data);
+  }
+
+  const getFollowers = async (userId) => {
+    if(!userId) return
+    const { data, error } = await supabase
+      .from("Follower")
+      .select("*, User(*)")
+     .eq("follower_user_id", userId);
+    if (!error) setFollowers(data);
+  }
+
+  const getFriends = () => {
+    const followingIds = following.map(f => f.follower_user_id);
+    const followerIds = followers.map(f => f.user_id);
+    const duplicates = followingIds.filter(id => followerIds.includes(id));
+    setFriends(duplicates)
+  }
+  useEffect(()=>{
+    getFriends()
+  },[followers,following])
+
   const getUser = async (id) => {
     const { data, error } = await supabase
       .from("User")
@@ -30,6 +61,8 @@ export const AuthProvider = ({ children }) => {
     if (error) return console.error(error);
     setUser(data);
     getLikes(data.id);
+    getFollowing(data.id);
+    getFollowers(data.id);
     router.push("/(tabs)");
   };
 
@@ -89,7 +122,13 @@ export const AuthProvider = ({ children }) => {
         signUp,
         signOut,
         likes,
-        getLikes
+        getLikes,
+        followers,
+        getFollowers,
+        following,
+        getFollowing,
+        friends,
+        getFriends,
       }}
     >
       {children}

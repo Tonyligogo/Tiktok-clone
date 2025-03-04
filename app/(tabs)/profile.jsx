@@ -1,14 +1,13 @@
-import { View, Text, TouchableOpacity } from 'react-native';
-import { useAuth } from '../../providers/AuthProvider';
+import { useEffect } from "react";
+import Profile from "../../components/profile";
+import { useAuth } from "../../providers/AuthProvider";
 
 export default function ProfileScreen() {
-  const {signOut} = useAuth();
+  const { user, following, followers, getFollowers } = useAuth();
+    useEffect(()=>{
+      getFollowers(user?.id)
+    },[user?.id])
   return (
-    <View>
-      <Text style={{color:'red', fontWeight:800}} >Profile screen</Text>
-      <TouchableOpacity onPress={()=>signOut()}>
-        <Text style={{marginTop:20, padding:10, backgroundColor:'black',color:'white'}}>Logout</Text>
-      </TouchableOpacity>
-    </View>
+    <Profile user={user} following={following} followers={followers}/>
   );
 }

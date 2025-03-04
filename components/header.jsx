@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 const Header = ({title, color, goBack=false}) => {
     const router = useRouter()
   return (
-    <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+    <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between', marginTop:10}}>
         <View style={{width:40}}>
         {goBack && <TouchableOpacity onPress={()=>router.back()}>
         <Ionicons name="chevron-back" size={30} color={color} />
